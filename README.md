@@ -1,5 +1,5 @@
 # topdata
-Website mockup that dynamically generates trackhub files
+Test django app that dynamically generates trackhub files
 
 ## Quick setup
 ```

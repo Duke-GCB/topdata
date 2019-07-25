@@ -33,7 +33,7 @@ def decode_key_dict(encoded_str):
     for part in parts:
         key_values = part.split('_')
         key = key_values[0]
-        values = key_values[1:]
+        values = [val for val in key_values[1:] if val]
         if values:
             key_dict[key] = values
     return key_dict
@@ -62,12 +62,15 @@ def get_tracks(encoded_key_value):
     query = Track.objects.all()
     tf_names = key_dict.get(NameForm.TF_NAME)
     if tf_names:
+        print("tf_names {}".format(tf_names))
         query = query.filter(tf_name__name__in=tf_names)
     cell_types = key_dict.get(NameForm.CELL_TYPE)
     if cell_types:
+        print("cell_types {}".format(cell_types))
         query = query.filter(cell_type__name__in=cell_types)
     rep_names = key_dict.get(NameForm.REP_NAME)
     if rep_names:
+        print("rep_names {}".format(rep_names))
         query = query.filter(rep_name__name__in=rep_names)
     return query
 
@@ -88,7 +91,6 @@ def hub(request, encoded_key_value):
     context = {
         'hub_id': encoded_key_value
     }
-    data = template.render(context)
     return HttpResponse(template.render(context), content_type='text/plain')
 
 def genomes(request, encoded_key_value):

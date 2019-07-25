@@ -1,0 +1,9 @@
+<h1>Details</h1>
+<ul>
+    <li>ID: {{  hub.id }}</li>
+    <li><a href="hub.txt">hub.txt</a></li>
+    <li><a href="genomes.txt">genomes.txt</a></li>
+    {% for genome in genomes %}
+        <li><a href="{{ genome.name }}/trackDb.txt">{{ genome.name }}/trackDb.txt</a></li>
+    {% endfor %}
+</ul>

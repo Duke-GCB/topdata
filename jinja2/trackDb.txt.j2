@@ -1,0 +1,13 @@
+{% for track in tracks %}
+track {{ track.name }}
+bigDataUrl {{ track.big_data_url }}
+shortLabel {{ track.short_label }}
+longLabel {{ track.long_label }}
+type {{ track.file_type }}
+graphTypeDefault bar
+autoScale off
+maxHeightPixels 100:32:8
+viewLimits 0:100
+visibility dense
+
+{% endfor %}

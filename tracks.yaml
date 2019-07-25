@@ -1,0 +1,84 @@
+- assembly: hg38
+  tracks:
+  - track: hg38_AR_8988T_rep1
+    type: bigWig
+    tf_name: AR
+    cell_type: 8988T
+    rep_name: rep1
+    shortLabel: AR 8988T rep1
+    longLabel: AR 8988T rep1 occupancy predicted by TOP model using DNase data
+    bigDataUrl: "http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg38/TFs_cells/bigWig/AR/8988T/AR_MA0007.2_1e-5_8988T_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep1.bw"
+
+- assembly: hg19
+  tracks:
+  - track: AR_8988T_rep1
+    type: bigWig
+    tf_name: AR
+    cell_type: 8988T
+    rep_name: rep1
+    shortLabel: AR 8988T rep1
+    longLabel: AR 8988T rep1 occupancy predicted by TOP model using DNase data
+    bigDataUrl: "http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg19/TFs_cells/bigWig/AR/8988T/AR_MA0007.2_1e-5_8988T_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep1.bw"
+
+  - track: AR_8988T_rep2
+    type: bigWig
+    tf_name: AR
+    cell_type: 8988T
+    rep_name: rep2
+    shortLabel: AR 8988T rep2
+    longLabel: AR 8988T rep2 occupancy predicted by TOP model using DNase data
+    bigDataUrl: http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg19/TFs_cells/bigWig/AR/8988T/AR_MA0007.2_1e-5_8988T_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep2.bw
+
+  - track: AR_A549_rep1
+    type: bigWig
+    tf_name: AR
+    cell_type: A549
+    rep_name: rep1
+    shortLabel: AR A549 rep1
+    longLabel: AR A549 rep1 occupancy predicted by TOP model using DNase data
+    bigDataUrl: http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg19/TFs_cells/bigWig/AR/A549/AR_MA0007.2_1e-5_A549_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep1.bw
+
+  - track: AR_A549_rep2
+    type: bigWig
+    tf_name: AR
+    cell_type: A549
+    rep_name: rep2
+    shortLabel: AR A549 rep2
+    longLabel: AR A549 rep2 occupancy predicted by TOP model using DNase data
+    bigDataUrl: http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg19/TFs_cells/bigWig/AR/A549/AR_MA0007.2_1e-5_A549_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep2.bw
+
+  - track: ATF1_8988T_rep1
+    type: bigWig
+    tf_name: ATF1
+    cell_type: 8988T
+    rep_name: rep1
+    shortLabel: ATF1 8988T rep1
+    longLabel: ATF1 8988T rep1 occupancy predicted by TOP model using DNase data
+    bigDataUrl: http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg19/TFs_cells/bigWig/ATF1/8988T/ATF1_PB0004.1_1e-5_8988T_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep1.bw
+
+  - track: ATF1_8988T_rep2
+    type: bigWig
+    tf_name: ATF1
+    cell_type: 8988T
+    rep_name: rep2
+    shortLabel: ATF1 8988T rep2
+    longLabel: ATF1 8988T rep2 occupancy predicted by TOP model using DNase data
+    bigDataUrl: http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg19/TFs_cells/bigWig/ATF1/8988T/ATF1_PB0004.1_1e-5_8988T_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep2.bw
+
+  - track: ATF1_A549_rep1
+    type: bigWig
+    tf_name: ATF1
+    cell_type: A549
+    rep_name: rep1
+    shortLabel: ATF1 A549 rep1
+    longLabel: ATF1 A549 rep1 occupancy predicted by TOP model using DNase data
+    bigDataUrl: http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg19/TFs_cells/bigWig/ATF1/A549/ATF1_PB0004.1_1e-5_A549_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep1.bw
+
+  - track: ATF1_A549_rep2
+    type: bigWig
+    tf_name: ATF1
+    cell_type: A549
+    rep_name: rep2
+    shortLabel: ATF1 A549 rep2
+    longLabel: ATF1 A549 rep2 occupancy predicted by TOP model using DNase data
+    bigDataUrl: http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg19/TFs_cells/bigWig/ATF1/A549/ATF1_PB0004.1_1e-5_A549_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep2.bw

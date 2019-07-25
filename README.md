@@ -5,6 +5,6 @@ Website mockup that dynamically generates trackhub files
 ```
 pip install -r requirements
 python manage.py migrate
-python manage.py loadtracks tracks.yml
+python manage.py loadtracks tracks.yaml
 python manage.py runserver
 ```

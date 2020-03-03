@@ -1,14 +1,13 @@
 from django.http import HttpResponse
 from django.template import loader
+from django.db.models import Q
 from jinja2 import Template
-from django.shortcuts import redirect
-from tracks.models import Track
-from tracks.forms import NameForm
+from django.shortcuts import redirect, render
+from tracks.models import Track, TFName, CellType, Genome
+from tracks.forms import TFForm, CellTypeForm, FormFields
 import os
 
 
-SPLIT_ARY_SEP = '+'
-HUB_NAME_ITEM_SEP = '__'
 TEMPLATE_CONFIG = 'templates.yaml'
 JINJA_TEMPLATE_DIR = 'jinja2'
 
@@ -27,6 +26,7 @@ def encode_key_dict(key_dict):
         )
     return '__'.join(parts)
 
+
 def decode_key_dict(encoded_str):
     key_dict = {}
     parts = encoded_str.split('__')
@@ -40,7 +40,11 @@ def decode_key_dict(encoded_str):
 
 
 def index(request):
-    form = NameForm(request.POST or None)
+    return redirect('/tracks/select-factors/')
+
+
+def select_factors(request):
+    form = TFForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
             data = {}
@@ -50,29 +54,57 @@ def index(request):
             encoded_key_values = encode_key_dict(data)
             return redirect('/tracks/{}/'.format(encoded_key_values))
 
-    template = loader.get_template('tracks/index.html')
+    template = loader.get_template('tracks/select_factors.html')
     context = {
         'form': form
     }
     return HttpResponse(template.render(context, request))
 
 
+def select_cell_type(request):
+    form = CellTypeForm(request.POST or None)
+    template = loader.get_template('tracks/select_cell_type.html')
+    context = {
+        'form': form
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def choose_combinations(request):
+    tfnames = TFName.objects.filter(id__in=request.POST.getlist(FormFields.TF_NAME))
+    celltypes = CellType.objects.filter(id__in=request.POST.getlist(FormFields.CELL_TYPE))
+    context = {
+        'tfnames': tfnames,
+        'celltypes': celltypes,
+    }
+    print(context)
+    return render(request, 'tracks/choose_combinations.html', context)
+
+
+def view_genome_browser(request):
+    track_strs = request.POST.getlist("track_str")
+    tf_celltype_pairs = [track_str.split(',') for track_str in track_strs]
+    track_ids = []
+    for tf, celltype in tf_celltype_pairs:
+        for track in Track.objects.filter(tf_name__name=tf, cell_type__name=celltype):
+            track_ids.append(str(track.id))
+
+    encoded_key_value = '_'.join(track_ids)
+    dynamic_hub_url = request.build_absolute_uri('/tracks/{}/hub.txt'.format(encoded_key_value))
+    genome = Genome.objects.get()
+    genome_browser_url = "https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db={}&hubUrl={}".format(
+        genome.name, dynamic_hub_url
+    )
+    return redirect(genome_browser_url)
+
+
 def get_tracks(encoded_key_value):
-    key_dict = decode_key_dict(encoded_key_value)
-    query = Track.objects.all()
-    tf_names = key_dict.get(NameForm.TF_NAME)
-    if tf_names:
-        print("tf_names {}".format(tf_names))
-        query = query.filter(tf_name__name__in=tf_names)
-    cell_types = key_dict.get(NameForm.CELL_TYPE)
-    if cell_types:
-        print("cell_types {}".format(cell_types))
-        query = query.filter(cell_type__name__in=cell_types)
-    rep_names = key_dict.get(NameForm.REP_NAME)
-    if rep_names:
-        print("rep_names {}".format(rep_names))
-        query = query.filter(rep_name__name__in=rep_names)
-    return query
+    return Track.objects.filter(pk__in=encoded_key_value.split("_"))
+
+
+def decode_track_keys(encoded_track_strs):
+    track_strs = encoded_track_strs.split("__")
+    return [track_str.split("_") for track_str in track_strs]
 
 
 def detail(request, encoded_key_value):

@@ -36,7 +36,7 @@ class Track(models.Model):
     name = models.CharField(max_length=255, unique=True, help_text="Name of the track")
     short_label = models.CharField(max_length=255, help_text="Short label used in trackDb.txt")
     long_label = models.CharField(max_length=255, help_text="Long label used in trackDb.txt")
-    big_data_url = models.URLField(help_text="URL used for bigDataUrl in trackDb.txt")
+    big_data_url = models.URLField(help_text="URL used for bigDataUrl in trackDb.txt", max_length=1000)
     file_type = models.CharField(max_length=255, help_text="Type of file referenced by big_data_url")
     tf_name = models.ForeignKey(TFName, on_delete=models.CASCADE, help_text="Transcription factor")
     cell_type = models.ForeignKey(CellType, on_delete=models.CASCADE, help_text="Cell type")

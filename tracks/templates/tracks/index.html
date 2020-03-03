@@ -1,11 +1,2 @@
-<h1>
-    Trackhub creator
-</h1>
 
-<form action="/tracks/" method="post" class="uniForm">
-    {% csrf_token %}
 
-    {{ form.as_p }}
-
-    <input type="submit" value="Create trackhub">
-</form>

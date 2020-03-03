@@ -1,0 +1,23 @@
+{% load bootstrap4 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item" aria-current="page">Top Data</li>
+          <li class="breadcrumb-item" aria-current="page">Transcription Factors</li>
+          <li class="breadcrumb-item active" aria-current="page">Cell Types</li>
+      </ol>
+    </nav>
+
+    <form action="/tracks/choose-combinations/" method="post" class="uniForm">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <input class="btn btn-primary" type="submit" value="Continue">
+    </form>
+</div>

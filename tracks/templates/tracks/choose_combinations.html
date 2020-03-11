@@ -1,19 +1,8 @@
-{% load bootstrap4 %}
-
-{# Load CSS and JavaScript #}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
+{% include "tracks/base.html" %}
+{% include "tracks/navbar.html" %}
 
 <div class="container-fluid">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-          <li class="breadcrumb-item" aria-current="page">Top Data</li>
-          <li class="breadcrumb-item" aria-current="page">Transcription Factors</li>
-          <li class="breadcrumb-item" aria-current="page">Cell Types</li>
-          <li class="breadcrumb-item active" aria-current="page">Choose Tracks</li>
-      </ol>
-    </nav>
-
+    {% include "tracks/steps_progress.html" %}
     <form action="/tracks/view-genome-browser/" method="post" class="uniForm">
         {% csrf_token %}
         <table class="table table-sm w-auto">

@@ -5,21 +5,21 @@ class Genome(models.Model):
     """
     A genome that a track exists in. Example: hg19.
     """
-    name = models.CharField(max_length=255, unique=True, help_text="Name of the genome")
+    name = models.CharField(primary_key=True, max_length=255, unique=True, help_text="Name of the genome")
     def __str__(self):
-        return "Genome - pk: {} name: '{}'".format(self.pk, self.name)
+        return "Genome - pk: {}".format(self.pk)
 
 
 class TFName(models.Model):
-    name = models.CharField(max_length=255, unique=True, help_text="Name of the transcription factor")
+    name = models.CharField(primary_key=True, max_length=255, unique=True, help_text="Name of the transcription factor")
     def __str__(self):
-        return "TFName - pk: {} name: '{}'".format(self.pk, self.name)
+        return "TFName - pk: {}".format(self.pk)
 
 
 class CellType(models.Model):
-    name = models.CharField(max_length=255, unique=True, help_text="Name of the cell type")
+    name = models.CharField(primary_key=True, max_length=255, unique=True, help_text="Name of the cell type")
     def __str__(self):
-        return "CellType - pk: {} name: '{}'".format(self.pk, self.name)
+        return "CellType - pk: {}".format(self.pk)
 
 
 class RepName(models.Model):

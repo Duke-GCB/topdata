@@ -19,9 +19,9 @@ class TFForm(forms.Form):
         super(TFForm, self).__init__(*args, **kwargs)
         self.fields[FormFields.TF_NAME] = ModelMultipleChoiceField(
             queryset=TFName.objects.order_by('name'),
-            widget=forms.SelectMultiple(attrs={'class':'form-control h-75'}),
-            required = False,
-            label="Select transcription factors",
+            widget=forms.SelectMultiple(attrs={'class':'form-control topdata-large-vertical'}),
+            required = True,
+            label="Select one or more transcription factors",
         )
 
 
@@ -31,11 +31,13 @@ class CellTypeForm(forms.Form):
         super(CellTypeForm, self).__init__(*args, **kwargs)
         self.fields[FormFields.CELL_TYPE] = ModelMultipleChoiceField(
             queryset=CellType.objects.order_by('name'),
-            widget=forms.SelectMultiple(attrs={'class':'form-control h-75'}),
-            required = False,
+            widget=forms.SelectMultiple(attrs={'class':'form-control topdata-large-vertical'}),
+            required = True,
             label="Select cell types",
         )
-        self.fields[FormFields.TF_NAME] = forms.CharField(
+        self.fields[FormFields.TF_NAME] = ModelMultipleChoiceField(
+            queryset=TFName.objects.order_by('name'),
             widget=forms.MultipleHiddenInput(),
-            required=True,
+            required = True,
+            label="Select one or more transcription factors",
         )

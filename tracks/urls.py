@@ -5,7 +5,8 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='tracks-index'),
-    path('select-factors/', views.select_factors, name='tracks-select_factors'),
+    path('about/', views.about, name='tracks-about'),
+    path('select-factors/', views.select_factors, name='tracks-factors'),
     path('select-cell-type/', views.select_cell_type, name='tracks-select_cell_type'),
     path('choose-combinations/', views.choose_combinations, name='tracks-choose_combinations'),
     path('view-genome-browser/', views.view_genome_browser, name='tracks-view_genome_browser'),

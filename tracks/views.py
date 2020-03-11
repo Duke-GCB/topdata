@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.template import loader
 from django.db.models import Q
 from jinja2 import Template
-from django.shortcuts import redirect, render
+from django.shortcuts import reverse, redirect, render
 from tracks.models import Track, TFName, CellType, Genome
 from tracks.forms import TFForm, CellTypeForm, FormFields
 import os
@@ -12,6 +12,43 @@ TEMPLATE_CONFIG = 'templates.yaml'
 JINJA_TEMPLATE_DIR = 'jinja2'
 
 
+class Navigation(object):
+    TITLE = "Top Data"
+    TRACKS_PAGE = 'Tracks'
+    ABOUT_PAGE = 'About'
+
+    @staticmethod
+    def make_items(active_page):
+        return [
+            {
+                'label': Navigation.TRACKS_PAGE,
+                'url_name': 'tracks-factors',
+                'is_active': active_page == Navigation.TRACKS_PAGE,
+            },
+            {
+                'label': Navigation.ABOUT_PAGE,
+                'url_name': 'tracks-about',
+                'is_active': active_page == Navigation.ABOUT_PAGE,
+            },
+        ]
+
+class Steps(object):
+    TRANSCRIPTION_FACTORS = 'Transcription Factors'
+    CELL_TYPE = 'Cell Type'
+    TRACK = 'Tracks'
+
+    @staticmethod
+    def make_items(active_step_name):
+        items = []
+        for step_name in [Steps.TRANSCRIPTION_FACTORS, Steps.CELL_TYPE, Steps.TRACK]:
+            items.append({
+                "label": step_name,
+                "is_active": active_step_name == step_name,
+            })
+            if active_step_name == step_name:
+                break
+
+        return items
 def get_template(template_filename):
     template_path = os.path.join(JINJA_TEMPLATE_DIR, template_filename)
     with open(template_path) as infile:
@@ -40,44 +77,74 @@ def decode_key_dict(encoded_str):
 
 
 def index(request):
-    return redirect('/tracks/select-factors/')
+    return redirect('tracks-factors')
+
+def about(request):
+    template = loader.get_template('tracks/about.html')
+    context = {
+        'nav_title': Navigation.TITLE,
+        'nav_items': Navigation.make_items(active_page=Navigation.ABOUT_PAGE),
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def get_request_data(request):
+    if request.method == 'POST':
+        return request.POST
+    else:
+        return request.GET
+
+
+def make_field_name_query_params(form, name):
+    return [name + '=' + str(field.pk) for field in form.cleaned_data[name]]
 
 
 def select_factors(request):
-    form = TFForm(request.POST or None)
+    form = TFForm(get_request_data(request))
     if request.method == 'POST':
         if form.is_valid():
-            data = {}
-            for k,v in form.cleaned_data.items():
-                data[k] = [x.name for x in v]
-
-            encoded_key_values = encode_key_dict(data)
-            return redirect('/tracks/{}/'.format(encoded_key_values))
-
+            query_param_ary = make_field_name_query_params(form, FormFields.TF_NAME)
+            query_params = '?' + '&'.join(query_param_ary)
+            return redirect(reverse('tracks-select_cell_type') + query_params)
     template = loader.get_template('tracks/select_factors.html')
     context = {
-        'form': form
+        'nav_title': Navigation.TITLE,
+        'nav_items': Navigation.make_items(active_page=Navigation.TRACKS_PAGE),
+        'step_items': Steps.make_items(Steps.TRANSCRIPTION_FACTORS),
+        'form': form,
     }
     return HttpResponse(template.render(context, request))
 
 
 def select_cell_type(request):
-    form = CellTypeForm(request.POST or None)
+    form = CellTypeForm(get_request_data(request))
     template = loader.get_template('tracks/select_cell_type.html')
+    if request.method == 'POST':
+        if form.is_valid():
+            query_param_ary = make_field_name_query_params(form, FormFields.TF_NAME)
+            query_param_ary.extend(make_field_name_query_params(form, FormFields.CELL_TYPE))
+            query_params = '?' + '&'.join(query_param_ary)
+            return redirect(reverse('tracks-choose_combinations') + query_params)
     context = {
+        'nav_title': Navigation.TITLE,
+        'nav_items': Navigation.make_items(active_page=Navigation.TRACKS_PAGE),
+        'step_items': Steps.make_items(Steps.CELL_TYPE),
         'form': form
     }
     return HttpResponse(template.render(context, request))
 
 
 def choose_combinations(request):
-    tfnames = TFName.objects.filter(id__in=request.POST.getlist(FormFields.TF_NAME))
-    celltypes = CellType.objects.filter(id__in=request.POST.getlist(FormFields.CELL_TYPE))
+    request_data = get_request_data(request)
+    tfnames = TFName.objects.filter(pk__in=request_data.getlist(FormFields.TF_NAME))
+    celltypes = CellType.objects.filter(pk__in=request_data.getlist(FormFields.CELL_TYPE))
     context = {
+        'nav_title': Navigation.TITLE,
+        'nav_items': Navigation.make_items(active_page=Navigation.TRACKS_PAGE),
         'tfnames': tfnames,
+        'step_items': Steps.make_items(Steps.TRACK),
         'celltypes': celltypes,
     }
-    print(context)
     return render(request, 'tracks/choose_combinations.html', context)
 
 

@@ -2,6 +2,8 @@ from django import forms
 from django.conf import settings
 from tracks.models import TranscriptionFactor, CellType
 
+FORM_CONTROL_ATTRS = {'class':'form-control topdata-large-vertical'}
+
 
 class FormFields(object):
     TF_NAME = 'tf'
@@ -18,7 +20,7 @@ class TFForm(forms.Form):
         super(TFForm, self).__init__(*args, **kwargs)
         self.fields[FormFields.TF_NAME] = ModelMultipleChoiceField(
             queryset=TranscriptionFactor.objects.order_by('name'),
-            widget=forms.SelectMultiple(attrs={'class':'form-control topdata-large-vertical'}),
+            widget=forms.SelectMultiple(attrs=FORM_CONTROL_ATTRS),
             required = False,
             label="Select one or more transcription factors",
         )
@@ -29,7 +31,7 @@ class CellTypeForm(forms.Form):
         super(CellTypeForm, self).__init__(data)
         self.fields[FormFields.CELL_TYPE] = ModelMultipleChoiceField(
             queryset=CellType.objects.order_by('name'),
-            widget=forms.SelectMultiple(attrs={'class':'form-control topdata-large-vertical'}),
+            widget=forms.SelectMultiple(attrs=FORM_CONTROL_ATTRS),
             required = False,
             label="Select cell types",
         )

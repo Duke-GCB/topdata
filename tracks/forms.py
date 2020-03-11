@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from tracks.models import TranscriptionFactor, CellType
 
 
@@ -24,8 +25,8 @@ class TFForm(forms.Form):
 
 
 class CellTypeForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(CellTypeForm, self).__init__(*args, **kwargs)
+    def __init__(self, data, request_method):
+        super(CellTypeForm, self).__init__(data)
         self.fields[FormFields.CELL_TYPE] = ModelMultipleChoiceField(
             queryset=CellType.objects.order_by('name'),
             widget=forms.SelectMultiple(attrs={'class':'form-control topdata-large-vertical'}),
@@ -38,3 +39,17 @@ class CellTypeForm(forms.Form):
             required = True,
             label="Select one or more transcription factors",
         )
+        self.request_method = request_method
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.request_method == 'POST':
+            num_tfs = len(cleaned_data.get(FormFields.TF_NAME))
+            num_cell_types = len(cleaned_data.get(FormFields.CELL_TYPE))
+            num_tracks = num_tfs * num_cell_types
+            if (num_tracks) > settings.TRACK_SELECTION_LIMIT:
+                msg = "You many only select {} total tracks. " \
+                      "You have selected {} transcription factors and {} cell types for a total of {} tracks.".format(
+                    settings.TRACK_SELECTION_LIMIT, num_tfs, num_cell_types, num_tracks
+                )
+                raise forms.ValidationError(msg)

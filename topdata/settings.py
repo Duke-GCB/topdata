@@ -122,3 +122,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 django_heroku.settings(locals())
+
+TRACK_SELECTION_LIMIT = os.getenv('TOPDATA_TRACK_SELECTION_LIMIT', 100)

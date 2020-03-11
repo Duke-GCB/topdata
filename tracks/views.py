@@ -117,7 +117,7 @@ def select_factors(request):
 
 
 def select_cell_type(request):
-    form = CellTypeForm(get_request_data(request))
+    form = CellTypeForm(data=get_request_data(request), request_method=request.method)
     template = loader.get_template('tracks/select_cell_type.html')
     if request.method == 'POST':
         if form.is_valid():

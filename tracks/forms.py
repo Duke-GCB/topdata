@@ -1,6 +1,6 @@
 from django import forms
 from django.conf import settings
-from tracks.models import TranscriptionFactor, CellType
+from tracks.models import TranscriptionFactor, CellType, Track
 
 FORM_CONTROL_ATTRS = {'class':'form-control topdata-large-vertical'}
 
@@ -46,12 +46,13 @@ class CellTypeForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         if self.request_method == 'POST':
-            num_tfs = len(cleaned_data.get(FormFields.TF_NAME))
-            num_cell_types = len(cleaned_data.get(FormFields.CELL_TYPE))
-            num_tracks = num_tfs * num_cell_types
-            if (num_tracks) > settings.TRACK_SELECTION_LIMIT:
+            num_tracks = Track.objects.filter(
+                tf__name__in=cleaned_data.get(FormFields.TF_NAME),
+                cell_type__name__in=cleaned_data.get(FormFields.CELL_TYPE),
+            ).count()
+            if num_tracks > settings.TRACK_SELECTION_LIMIT:
                 msg = "You many only select {} total tracks. " \
-                      "You have selected {} transcription factors and {} cell types for a total of {} tracks.".format(
-                    settings.TRACK_SELECTION_LIMIT, num_tfs, num_cell_types, num_tracks
+                      "You have selected {} tracks.".format(
+                    settings.TRACK_SELECTION_LIMIT, num_tracks
                 )
                 raise forms.ValidationError(msg)

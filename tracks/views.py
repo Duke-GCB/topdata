@@ -151,19 +151,31 @@ def choose_combinations(request):
 
 def view_genome_browser(request):
     track_strs = request.POST.getlist("track_str")
-    tf_celltype_pairs = [track_str.split(',') for track_str in track_strs]
-    track_ids = []
-    for tf, celltype in tf_celltype_pairs:
-        for track in Track.objects.filter(tf__name=tf, cell_type__name=celltype):
-            track_ids.append(str(track.id))
-
+    tf_cell_type_pairs = [track_str.split(',') for track_str in track_strs]
+    position = get_position_from_first_track(tf_cell_type_pairs)
+    track_ids = get_track_ids(tf_cell_type_pairs)
     encoded_key_value = '_'.join(track_ids)
     dynamic_hub_url = request.build_absolute_uri('/tracks/{}/hub.txt'.format(encoded_key_value))
     genome = Genome.objects.get()
-    genome_browser_url = "https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db={}&hubUrl={}".format(
-        genome.name, dynamic_hub_url
+    genome_browser_url = "https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db={}&hubUrl={}&position={}".format(
+        genome.name, dynamic_hub_url, position
     )
-    return redirect(genome_browser_url)
+    print(genome_browser_url)
+    return redirect(dynamic_hub_url)
+
+
+def get_track_ids(tf_cell_type_pairs):
+    track_ids = []
+    for tf, cell_type in tf_cell_type_pairs:
+        for track in Track.objects.filter(tf__name=tf, cell_type__name=cell_type):
+            track_ids.append(str(track.id))
+    return track_ids
+
+
+def get_position_from_first_track(tf_cell_type_pairs):
+    first_tf, first_cell_type = tf_cell_type_pairs[0]
+    track = Track.objects.filter(tf__name=first_tf, cell_type__name=first_cell_type)[0]
+    return track.position
 
 
 def get_tracks(encoded_key_value):

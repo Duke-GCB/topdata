@@ -29,6 +29,7 @@ class Command(BaseCommand):
             tf, _ = TranscriptionFactor.objects.get_or_create(name=track_dict['tf_name'])
             cell_type, _ = CellType.objects.get_or_create(name=track_dict['cell_type'])
             rep_name, _ = RepName.objects.get_or_create(name=track_dict['rep_name'])
+            position = track_dict.get('position', '')
             Track.objects.create(
                 genome=genome,
                 name=track_dict['track'],
@@ -39,4 +40,5 @@ class Command(BaseCommand):
                 tf=tf,
                 cell_type=cell_type,
                 rep_name=rep_name,
+                position=position,
             )

@@ -8,6 +8,7 @@
     tf_name: AR
     track: AR_8988T_rep1
     type: bigWig
+    position: "chr1:35000-40000"
   - bigDataUrl: http://trackhub.genome.duke.edu/harteminklab/TOP/trackhubs/hg19/TFs_cells/bigWig/AR/8988T/AR_MA0007.2_1e-5_8988T_OpenChromDnase_M5_BH_middle_map0.9_pwm0_flank100_predictions_Rep2.bw
     cell_type: 8988T
     longLabel: AR 8988T rep2

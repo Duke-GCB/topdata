@@ -41,6 +41,7 @@ class Track(models.Model):
     tf = models.ForeignKey(TranscriptionFactor, on_delete=models.CASCADE, help_text="Transcription factor")
     cell_type = models.ForeignKey(CellType, on_delete=models.CASCADE, help_text="Cell type")
     rep_name = models.ForeignKey(RepName, on_delete=models.CASCADE, help_text="Replicate name")
+    position = models.CharField(max_length=255, help_text="Genome Browser position value")
     def __str__(self):
         return "Track - pk: {} genome: '{}' name: '{}'".format(self.pk, self.genome.name, self.name)
 

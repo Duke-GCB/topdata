@@ -117,7 +117,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 STATIC_URL = '/static/'
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), logging=False)
 
 TRACK_SELECTION_LIMIT = os.getenv('TOPDATA_TRACK_SELECTION_LIMIT', 100)
 ALL_DATA_URL = os.getenv('TOPDATA_ALL_DATA_URL')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}

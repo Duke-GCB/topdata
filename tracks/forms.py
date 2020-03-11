@@ -33,7 +33,7 @@ class CellTypeForm(forms.Form):
             queryset=CellType.objects.order_by('name'),
             widget=forms.SelectMultiple(attrs=FORM_CONTROL_ATTRS),
             required = False,
-            label="Select cell types",
+            label="Select one or more cell types",
         )
         self.fields[FormFields.TF_NAME] = ModelMultipleChoiceField(
             queryset=TranscriptionFactor.objects.order_by('name'),

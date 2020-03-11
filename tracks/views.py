@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.template import loader
-from django.db.models import Q
+from django.conf import settings
 from jinja2 import Template
 from django.shortcuts import reverse, redirect, render
 from tracks.models import Track, TranscriptionFactor, CellType, Genome
@@ -31,6 +31,16 @@ class Navigation(object):
                 'is_active': active_page == Navigation.ABOUT_PAGE,
             },
         ]
+
+    @staticmethod
+    def make_template_context(active_page, base_context={}):
+        context = base_context.copy()
+        context.update({
+            'nav_title': Navigation.TITLE,
+            'nav_items': Navigation.make_items(active_page=active_page),
+            'nav_download_all_url': settings.ALL_DATA_URL,
+        })
+        return context
 
 class Steps(object):
     TRANSCRIPTION_FACTORS = 'Transcription Factors'
@@ -81,10 +91,7 @@ def index(request):
 
 def about(request):
     template = loader.get_template('tracks/about.html')
-    context = {
-        'nav_title': Navigation.TITLE,
-        'nav_items': Navigation.make_items(active_page=Navigation.ABOUT_PAGE),
-    }
+    context = Navigation.make_template_context(Navigation.ABOUT_PAGE)
     return HttpResponse(template.render(context, request))
 
 
@@ -107,12 +114,10 @@ def select_factors(request):
             query_params = '?' + '&'.join(query_param_ary)
             return redirect(reverse('tracks-select_cell_type') + query_params)
     template = loader.get_template('tracks/select_factors.html')
-    context = {
-        'nav_title': Navigation.TITLE,
-        'nav_items': Navigation.make_items(active_page=Navigation.TRACKS_PAGE),
+    context = Navigation.make_template_context(Navigation.TRACKS_PAGE, {
         'step_items': Steps.make_items(Steps.TRANSCRIPTION_FACTORS),
         'form': form,
-    }
+    })
     return HttpResponse(template.render(context, request))
 
 
@@ -125,12 +130,10 @@ def select_cell_type(request):
             query_param_ary.extend(make_field_name_query_params(form, FormFields.CELL_TYPE))
             query_params = '?' + '&'.join(query_param_ary)
             return redirect(reverse('tracks-choose_combinations') + query_params)
-    context = {
-        'nav_title': Navigation.TITLE,
-        'nav_items': Navigation.make_items(active_page=Navigation.TRACKS_PAGE),
+    context = Navigation.make_template_context(Navigation.TRACKS_PAGE, {
         'step_items': Steps.make_items(Steps.CELL_TYPE),
         'form': form
-    }
+    })
     return HttpResponse(template.render(context, request))
 
 
@@ -138,13 +141,11 @@ def choose_combinations(request):
     request_data = get_request_data(request)
     tfs = TranscriptionFactor.objects.filter(pk__in=request_data.getlist(FormFields.TF_NAME))
     celltypes = CellType.objects.filter(pk__in=request_data.getlist(FormFields.CELL_TYPE))
-    context = {
-        'nav_title': Navigation.TITLE,
-        'nav_items': Navigation.make_items(active_page=Navigation.TRACKS_PAGE),
+    context = Navigation.make_template_context(Navigation.TRACKS_PAGE, {
         'tfs': tfs,
         'step_items': Steps.make_items(Steps.TRACK),
         'celltypes': celltypes,
-    }
+    })
     return render(request, 'tracks/choose_combinations.html', context)
 
 

@@ -160,8 +160,7 @@ def view_genome_browser(request):
     genome_browser_url = "https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db={}&hubUrl={}&position={}".format(
         genome.name, dynamic_hub_url, position
     )
-    print(genome_browser_url)
-    return redirect(dynamic_hub_url)
+    return redirect(genome_browser_url)
 
 
 def get_track_ids(tf_cell_type_pairs):

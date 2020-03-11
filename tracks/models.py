@@ -10,10 +10,10 @@ class Genome(models.Model):
         return "Genome - pk: {}".format(self.pk)
 
 
-class TFName(models.Model):
+class TranscriptionFactor(models.Model):
     name = models.CharField(primary_key=True, max_length=255, unique=True, help_text="Name of the transcription factor")
     def __str__(self):
-        return "TFName - pk: {}".format(self.pk)
+        return "TranscriptionFactor - pk: {}".format(self.pk)
 
 
 class CellType(models.Model):
@@ -38,7 +38,7 @@ class Track(models.Model):
     long_label = models.CharField(max_length=255, help_text="Long label used in trackDb.txt")
     big_data_url = models.URLField(help_text="URL used for bigDataUrl in trackDb.txt", max_length=1000)
     file_type = models.CharField(max_length=255, help_text="Type of file referenced by big_data_url")
-    tf_name = models.ForeignKey(TFName, on_delete=models.CASCADE, help_text="Transcription factor")
+    tf = models.ForeignKey(TranscriptionFactor, on_delete=models.CASCADE, help_text="Transcription factor")
     cell_type = models.ForeignKey(CellType, on_delete=models.CASCADE, help_text="Cell type")
     rep_name = models.ForeignKey(RepName, on_delete=models.CASCADE, help_text="Replicate name")
     def __str__(self):

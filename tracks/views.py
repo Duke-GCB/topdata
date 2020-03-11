@@ -3,7 +3,7 @@ from django.template import loader
 from django.db.models import Q
 from jinja2 import Template
 from django.shortcuts import reverse, redirect, render
-from tracks.models import Track, TFName, CellType, Genome
+from tracks.models import Track, TranscriptionFactor, CellType, Genome
 from tracks.forms import TFForm, CellTypeForm, FormFields
 import os
 
@@ -136,12 +136,12 @@ def select_cell_type(request):
 
 def choose_combinations(request):
     request_data = get_request_data(request)
-    tfnames = TFName.objects.filter(pk__in=request_data.getlist(FormFields.TF_NAME))
+    tfs = TranscriptionFactor.objects.filter(pk__in=request_data.getlist(FormFields.TF_NAME))
     celltypes = CellType.objects.filter(pk__in=request_data.getlist(FormFields.CELL_TYPE))
     context = {
         'nav_title': Navigation.TITLE,
         'nav_items': Navigation.make_items(active_page=Navigation.TRACKS_PAGE),
-        'tfnames': tfnames,
+        'tfs': tfs,
         'step_items': Steps.make_items(Steps.TRACK),
         'celltypes': celltypes,
     }
@@ -153,7 +153,7 @@ def view_genome_browser(request):
     tf_celltype_pairs = [track_str.split(',') for track_str in track_strs]
     track_ids = []
     for tf, celltype in tf_celltype_pairs:
-        for track in Track.objects.filter(tf_name__name=tf, cell_type__name=celltype):
+        for track in Track.objects.filter(tf__name=tf, cell_type__name=celltype):
             track_ids.append(str(track.id))
 
     encoded_key_value = '_'.join(track_ids)

@@ -26,13 +26,13 @@
                 <tr>
                     <th class="border-0">TFs</th>
                 </tr>
-                {% for tfname in tfnames %}
+                {% for tf in tfs %}
                 <tr>
-                    <th class="bg-light border">{{ tfname.name }}</th>
+                    <th class="bg-light border">{{ tf.name }}</th>
                     {% for celltype in celltypes %}
                         <td class="border">
                             <div class="text-center">
-                                <input type="checkbox" name="track_str" value="{{ tfname.name }},{{ celltype.name }}" checked>
+                                <input type="checkbox" name="track_str" value="{{ tf.name }},{{ celltype.name }}" checked>
                             </div>
                         </td>
                     {% endfor %}

@@ -157,9 +157,11 @@ def view_genome_browser(request):
     encoded_key_value = '_'.join(track_ids)
     dynamic_hub_url = request.build_absolute_uri('/tracks/{}/hub.txt'.format(encoded_key_value))
     genome = Genome.objects.get()
-    genome_browser_url = "https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db={}&hubUrl={}&position={}".format(
-        genome.name, dynamic_hub_url, position
+    genome_browser_url = "https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db={}&hubUrl={}".format(
+        genome.name, dynamic_hub_url
     )
+    if position:
+        genome_browser_url += "&position={}".format(position)
     return redirect(genome_browser_url)
 
 

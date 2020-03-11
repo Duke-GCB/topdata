@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.template import loader
 from django.conf import settings
+from django.utils.html import quote
 from jinja2 import Template
 from django.shortcuts import reverse, redirect, render
 from tracks.models import Track, TranscriptionFactor, CellType, Genome
@@ -57,8 +58,9 @@ class Steps(object):
             })
             if active_step_name == step_name:
                 break
-
         return items
+
+
 def get_template(template_filename):
     template_path = os.path.join(JINJA_TEMPLATE_DIR, template_filename)
     with open(template_path) as infile:
@@ -103,7 +105,7 @@ def get_request_data(request):
 
 
 def make_field_name_query_params(form, name):
-    return [name + '=' + str(field.pk) for field in form.cleaned_data[name]]
+    return [name + '=' + quote(field.pk) for field in form.cleaned_data[name]]
 
 
 def select_factors(request):
@@ -129,7 +131,7 @@ def select_cell_type(request):
             query_param_ary = make_field_name_query_params(form, FormFields.TF_NAME)
             query_param_ary.extend(make_field_name_query_params(form, FormFields.CELL_TYPE))
             query_params = '?' + '&'.join(query_param_ary)
-            return redirect(reverse('tracks-choose_combinations') + query_params)
+            return redirect(reverse('tracks-select_tracks') + query_params)
     context = Navigation.make_template_context(Navigation.TRACKS_PAGE, {
         'step_items': Steps.make_items(Steps.CELL_TYPE),
         'form': form
@@ -137,7 +139,7 @@ def select_cell_type(request):
     return HttpResponse(template.render(context, request))
 
 
-def choose_combinations(request):
+def select_tracks(request):
     request_data = get_request_data(request)
     tfs = TranscriptionFactor.objects.filter(pk__in=request_data.getlist(FormFields.TF_NAME))
     celltypes = CellType.objects.filter(pk__in=request_data.getlist(FormFields.CELL_TYPE))
@@ -146,7 +148,7 @@ def choose_combinations(request):
         'step_items': Steps.make_items(Steps.TRACK),
         'celltypes': celltypes,
     })
-    return render(request, 'tracks/choose_combinations.html', context)
+    return render(request, 'tracks/select_tracks.html', context)
 
 
 def view_genome_browser(request):

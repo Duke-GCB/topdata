@@ -23,9 +23,9 @@ class CellType(models.Model):
 
 
 class RepName(models.Model):
-    name = models.CharField(max_length=255, unique=True, help_text="Replicate name")
+    name = models.CharField(primary_key=True, max_length=255, unique=True, help_text="Replicate name")
     def __str__(self):
-        return "RepName - pk: {} name: '{}'".format(self.pk, self.name)
+        return "RepName - pk: {}".format(self.pk)
 
 
 class Track(models.Model):
@@ -33,7 +33,7 @@ class Track(models.Model):
     Contains tags associated with this track and url to a file that will be used by trackhub.
     """
     genome = models.ForeignKey(Genome, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, unique=True, help_text="Name of the track")
+    name = models.CharField(max_length=255, help_text="Name of the track")
     short_label = models.CharField(max_length=255, help_text="Short label used in trackDb.txt")
     long_label = models.CharField(max_length=255, help_text="Long label used in trackDb.txt")
     big_data_url = models.URLField(help_text="URL used for bigDataUrl in trackDb.txt", max_length=1000)

@@ -4,7 +4,7 @@ from django.forms.utils import ErrorList
 from django.utils.html import format_html_join, format_html
 from tracks.models import TranscriptionFactor, CellType, Track
 
-FORM_CONTROL_ATTRS = {'class':'form-control topdata-large-vertical'}
+FORM_CONTROL_ATTRS = {'class':'form-control', 'size':'20'}
 
 
 class FormFields(object):

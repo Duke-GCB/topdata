@@ -3,7 +3,7 @@
 
 <div class="container-fluid">
     {% include "tracks/steps_progress.html" %}
-    <form action="{% url 'tracks-factors' %}" method="post" class="uniForm">
+    <form action="{% url 'tracks-select_factors' %}" method="post" class="uniForm">
         {% csrf_token %}
 
         <div class="form-group">

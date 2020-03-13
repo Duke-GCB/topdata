@@ -5,7 +5,7 @@ from django.utils.html import quote
 from jinja2 import Template
 from django.shortcuts import reverse, redirect, render
 from tracks.models import Track, TranscriptionFactor, CellType, Genome
-from tracks.forms import TFForm, CellTypeForm, FormFields
+from tracks.forms import TranscriptionFactorForm, CellTypeForm, TracksForm, FormFields
 import os
 
 
@@ -23,7 +23,7 @@ class Navigation(object):
         return [
             {
                 'label': Navigation.TRACKS_PAGE,
-                'url_name': 'tracks-factors',
+                'url_name': 'tracks-select_factors',
                 'is_active': active_page == Navigation.TRACKS_PAGE,
             },
             {
@@ -43,15 +43,16 @@ class Navigation(object):
         })
         return context
 
+
 class Steps(object):
     TRANSCRIPTION_FACTORS = 'Transcription Factors'
-    CELL_TYPE = 'Cell Type'
-    TRACK = 'Tracks'
+    CELL_TYPES = 'Cell Type'
+    TRACKS = 'Tracks'
 
     @staticmethod
     def make_items(active_step_name):
         items = []
-        for step_name in [Steps.TRANSCRIPTION_FACTORS, Steps.CELL_TYPE, Steps.TRACK]:
+        for step_name in [Steps.TRANSCRIPTION_FACTORS, Steps.CELL_TYPES, Steps.TRACKS]:
             items.append({
                 "label": step_name,
                 "is_active": active_step_name == step_name,
@@ -61,35 +62,8 @@ class Steps(object):
         return items
 
 
-def get_template(template_filename):
-    template_path = os.path.join(JINJA_TEMPLATE_DIR, template_filename)
-    with open(template_path) as infile:
-        return Template(infile.read())
-
-
-def encode_key_dict(key_dict):
-    parts = []
-    for k, v in key_dict.items():
-        parts.append(
-            '{}_{}'.format(k, '_'.join(v))
-        )
-    return '__'.join(parts)
-
-
-def decode_key_dict(encoded_str):
-    key_dict = {}
-    parts = encoded_str.split('__')
-    for part in parts:
-        key_values = part.split('_')
-        key = key_values[0]
-        values = [val for val in key_values[1:] if val]
-        if values:
-            key_dict[key] = values
-    return key_dict
-
-
 def index(request):
-    return redirect('tracks-factors')
+    return redirect('tracks-select_factors')
 
 def about(request):
     template = loader.get_template('tracks/about.html')
@@ -97,24 +71,13 @@ def about(request):
     return HttpResponse(template.render(context, request))
 
 
-def get_request_data(request):
-    if request.method == 'POST':
-        return request.POST
-    else:
-        return request.GET
-
-
-def make_field_name_query_params(form, name):
-    return [name + '=' + quote(field.pk) for field in form.cleaned_data[name]]
-
-
 def select_factors(request):
-    form = TFForm(get_request_data(request))
     if request.method == 'POST':
+        form = TranscriptionFactorForm(request.POST)
         if form.is_valid():
-            query_param_ary = make_field_name_query_params(form, FormFields.TF_NAME)
-            query_params = '?' + '&'.join(query_param_ary)
-            return redirect(reverse('tracks-select_cell_type') + query_params)
+            return redirect(form.next_step_url())
+    else:
+        form = TranscriptionFactorForm()
     template = loader.get_template('tracks/select_factors.html')
     context = Navigation.make_template_context(Navigation.TRACKS_PAGE, {
         'step_items': Steps.make_items(Steps.TRANSCRIPTION_FACTORS),
@@ -124,47 +87,39 @@ def select_factors(request):
 
 
 def select_cell_type(request):
-    form = CellTypeForm(data=get_request_data(request), request_method=request.method)
-    template = loader.get_template('tracks/select_cell_type.html')
     if request.method == 'POST':
+        form = CellTypeForm(request.POST)
         if form.is_valid():
-            query_param_ary = make_field_name_query_params(form, FormFields.TF_NAME)
-            query_param_ary.extend(make_field_name_query_params(form, FormFields.CELL_TYPE))
-            query_params = '?' + '&'.join(query_param_ary)
-            return redirect(reverse('tracks-select_tracks') + query_params)
+            return redirect(form.next_step_url())
+    else:
+        if not request.GET.getlist(FormFields.TF_NAME):
+            return redirect('tracks-select_factors')
+        form = CellTypeForm(request.GET)
+        # clear cell type error so user isn't warned before they have a chance to enter data
+        del form.errors[FormFields.CELL_TYPE]
+    template = loader.get_template('tracks/select_cell_type.html')
     context = Navigation.make_template_context(Navigation.TRACKS_PAGE, {
-        'step_items': Steps.make_items(Steps.CELL_TYPE),
+        'step_items': Steps.make_items(Steps.CELL_TYPES),
         'form': form
     })
     return HttpResponse(template.render(context, request))
 
 
 def select_tracks(request):
-    request_data = get_request_data(request)
-    tfs = TranscriptionFactor.objects.filter(pk__in=request_data.getlist(FormFields.TF_NAME))
-    celltypes = CellType.objects.filter(pk__in=request_data.getlist(FormFields.CELL_TYPE))
+    if request.method == 'POST':
+        form = TracksForm(request.POST)
+        if form.is_valid():
+            return redirect(form.next_step_url(request))
+    tfs_names = request.GET.getlist(FormFields.TF_NAME)
+    celltypes_names = request.GET.getlist(FormFields.CELL_TYPE)
+    if not tfs_names or not celltypes_names:
+        return redirect('tracks-select_factors')
     context = Navigation.make_template_context(Navigation.TRACKS_PAGE, {
-        'tfs': tfs,
-        'step_items': Steps.make_items(Steps.TRACK),
-        'celltypes': celltypes,
+        'step_items': Steps.make_items(Steps.TRACKS),
+        'tfs': TranscriptionFactor.objects.filter(pk__in=tfs_names),
+        'celltypes': CellType.objects.filter(pk__in=celltypes_names),
     })
     return render(request, 'tracks/select_tracks.html', context)
-
-
-def view_genome_browser(request):
-    track_strs = request.POST.getlist("track_str")
-    tf_cell_type_pairs = [track_str.split(',') for track_str in track_strs]
-    position = get_position_from_first_track(tf_cell_type_pairs)
-    track_ids = get_track_ids(tf_cell_type_pairs)
-    encoded_key_value = '_'.join(track_ids)
-    dynamic_hub_url = request.build_absolute_uri('/tracks/{}/hub.txt'.format(encoded_key_value))
-    genome = Genome.objects.get()
-    genome_browser_url = "https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db={}&hubUrl={}".format(
-        genome.name, dynamic_hub_url
-    )
-    if position:
-        genome_browser_url += "&position={}".format(position)
-    return redirect(genome_browser_url)
 
 
 def get_track_ids(tf_cell_type_pairs):
@@ -199,6 +154,12 @@ def detail(request, encoded_key_value):
         'genomes': genomes
     }
     return HttpResponse(template.render(context, request))
+
+
+def get_template(template_filename):
+    template_path = os.path.join(JINJA_TEMPLATE_DIR, template_filename)
+    with open(template_path) as infile:
+        return Template(infile.read())
 
 
 def hub(request, encoded_key_value):

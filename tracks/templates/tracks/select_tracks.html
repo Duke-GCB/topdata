@@ -3,7 +3,7 @@
 
 <div class="container-fluid">
     {% include "tracks/steps_progress.html" %}
-    <form action="/tracks/view-genome-browser/" method="post" class="uniForm">
+    <form action="{% url 'tracks-select_tracks' %}" method="post" class="uniForm">
         {% csrf_token %}
         <table class="table table-sm w-auto">
             <thead>
@@ -41,5 +41,10 @@
             </tbody>
         </table>
     <input class="btn btn-primary" type="submit" value="View Genome Browser">
+
+    <div class="form-group">
+        {{ form.as_p }}
+    </div>
+
     </form>
 </div>

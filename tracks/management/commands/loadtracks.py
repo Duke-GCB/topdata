@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from tracks.models import Genome, Track, TFName, CellType, RepName
+from tracks.models import Genome, Track, TranscriptionFactor, CellType, RepName
 import yaml
 
 
@@ -26,9 +26,10 @@ class Command(BaseCommand):
         for track_dict in read_tracks_from_config(filename):
             genome_name = track_dict['genome_name']
             genome, _ = Genome.objects.get_or_create(name=genome_name)
-            tf_name, _ = TFName.objects.get_or_create(name=track_dict['tf_name'])
+            tf, _ = TranscriptionFactor.objects.get_or_create(name=track_dict['tf_name'])
             cell_type, _ = CellType.objects.get_or_create(name=track_dict['cell_type'])
             rep_name, _ = RepName.objects.get_or_create(name=track_dict['rep_name'])
+            position = track_dict.get('position', '')
             Track.objects.create(
                 genome=genome,
                 name=track_dict['track'],
@@ -36,7 +37,8 @@ class Command(BaseCommand):
                 short_label=track_dict['shortLabel'],
                 long_label=track_dict['longLabel'],
                 big_data_url=track_dict['bigDataUrl'],
-                tf_name=tf_name,
+                tf=tf,
                 cell_type=cell_type,
                 rep_name=rep_name,
+                position=position,
             )

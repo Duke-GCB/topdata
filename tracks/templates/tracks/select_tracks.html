@@ -1,20 +1,9 @@
-{% load bootstrap4 %}
-
-{# Load CSS and JavaScript #}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
+{% include "tracks/base.html" %}
+{% include "tracks/navbar.html" %}
 
 <div class="container-fluid">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-          <li class="breadcrumb-item" aria-current="page">Top Data</li>
-          <li class="breadcrumb-item" aria-current="page">Transcription Factors</li>
-          <li class="breadcrumb-item" aria-current="page">Cell Types</li>
-          <li class="breadcrumb-item active" aria-current="page">Choose Tracks</li>
-      </ol>
-    </nav>
-
-    <form action="/tracks/view-genome-browser/" method="post" class="uniForm">
+    {% include "tracks/steps_progress.html" %}
+    <form action="{% url 'tracks-select_tracks' %}" method="post" class="uniForm">
         {% csrf_token %}
         <table class="table table-sm w-auto">
             <thead>
@@ -37,13 +26,13 @@
                 <tr>
                     <th class="border-0">TFs</th>
                 </tr>
-                {% for tfname in tfnames %}
+                {% for tf in tfs %}
                 <tr>
-                    <th class="bg-light border">{{ tfname.name }}</th>
+                    <th class="bg-light border">{{ tf.name }}</th>
                     {% for celltype in celltypes %}
                         <td class="border">
                             <div class="text-center">
-                                <input type="checkbox" name="track_str" value="{{ tfname.name }},{{ celltype.name }}" checked>
+                                <input type="checkbox" name="track_str" value="{{ tf.name }},{{ celltype.name }}" checked>
                             </div>
                         </td>
                     {% endfor %}
@@ -52,5 +41,10 @@
             </tbody>
         </table>
     <input class="btn btn-primary" type="submit" value="View Genome Browser">
+
+    <div class="form-group">
+        {{ form.as_p }}
+    </div>
+
     </form>
 </div>

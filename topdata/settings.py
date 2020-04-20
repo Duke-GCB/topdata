@@ -16,17 +16,13 @@ import django_heroku
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'q5ereuxq&1!+crkmcv=$@#7&d^m0*g@)q!n-8$c(h0ajn2j%gi'
+SECRET_KEY =  os.environ.get('SECRET_KEY')
+DEBUG = os.environ.get('DJANGO_DEBUG', '') == 'True'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
 
 
 # Application definition
@@ -121,4 +117,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 STATIC_URL = '/static/'
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), logging=False)
+
+TRACK_SELECTION_LIMIT = os.getenv('TOPDATA_TRACK_SELECTION_LIMIT', 100)
+ALL_DATA_URL = os.getenv('TOPDATA_ALL_DATA_URL')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}

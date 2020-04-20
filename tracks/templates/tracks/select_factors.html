@@ -1,18 +1,9 @@
-{% load bootstrap4 %}
+{% include "tracks/base.html" %}
+{% include "tracks/navbar.html" %}
 
-{# Load CSS and JavaScript #}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
-
-<div class="container-fluid" >
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-          <li class="breadcrumb-item" aria-current="page">Top Data</li>
-          <li class="breadcrumb-item active" aria-current="page">Transcription Factors</li>
-      </ol>
-    </nav>
-
-    <form action="/tracks/select-cell-type/" method="post" class="uniForm">
+<div class="container-fluid">
+    {% include "tracks/steps_progress.html" %}
+    <form action="{% url 'tracks-select_factors' %}" method="post" class="uniForm">
         {% csrf_token %}
 
         <div class="form-group">
@@ -21,5 +12,4 @@
 
         <input class="btn btn-primary" type="submit" value="Continue">
     </form>
-
 </div>

@@ -1,0 +1,7 @@
+<nav>
+    <ol class="breadcrumb">
+        {% for step_item in step_items %}
+            <li class="breadcrumb-item{% if step_item.is_active %} active{% endif %}">{{ step_item.label }}</li>
+        {% endfor %}
+    </ol>
+</nav>

@@ -1,0 +1,20 @@
+<div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <span class="navbar-brand">{{ nav_title }}</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                {% for nav_item in nav_items %}
+                <li class="nav-item{% if nav_item.is_active %} active{% endif %}">
+                    <a class="nav-link" href="{% url nav_item.url_name %}">{{ nav_item.label }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <a class="btn btn-light" href="{{ nav_download_all_url }}" data-toggle="tooltip" data-placement="bottom"
+           title="Download all tracks in a zip file.">Download All</a>
+    </nav>
+</div>

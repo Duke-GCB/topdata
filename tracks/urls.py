@@ -5,10 +5,10 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='tracks-index'),
+    path('about/', views.about, name='tracks-about'),
     path('select-factors/', views.select_factors, name='tracks-select_factors'),
     path('select-cell-type/', views.select_cell_type, name='tracks-select_cell_type'),
-    path('choose-combinations/', views.choose_combinations, name='tracks-choose_combinations'),
-    path('view-genome-browser/', views.view_genome_browser, name='tracks-view_genome_browser'),
+    path('select-tracks/', views.select_tracks, name='tracks-select_tracks'),
     path('<encoded_key_value>/', views.detail, name='tracks-detail'),
     path('<encoded_key_value>/hub.txt', views.hub, name='tracks-hub'),
     path('<encoded_key_value>/genomes.txt', views.genomes, name='tracks-genomes'),
